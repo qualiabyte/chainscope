@@ -1,0 +1,259 @@
+
+# Chainscope Demo
+# See http://localhost:9200/_plugin/marvel/sense/index.html
+
+# Block Count
+#
+# Gets the total number of blocks
+# currently indexed by elastic search
+GET _search
+{
+  "query": {
+    "match": { "_type": "block" }
+  },
+  "fields": [],
+  "size": 0
+}
+
+# Block Height (Max and Min)
+#
+# Uses aggregations to detect highest and lowest height
+# of blocks currently indexed by Elasticsearch
+GET _search
+{
+  "query": {
+    "match": { "_type": "block" }
+  },
+  "aggregations": {
+    "min_height": {"min": { "field": "height" }},
+    "max_height": {"max": { "field": "height" }}
+  },
+  "fields": [],
+  "size": 0
+}
+
+# Block Difficulty (Max and Min)
+#
+# Uses aggregations for max and min difficulty
+GET _search
+{
+  "query": {
+    "match": { "_type": "block" }
+  },
+  "aggregations": {
+    "min_difficulty": {"min": { "field": "difficulty" }},
+    "max_difficulty": {"max": { "field": "difficulty" }}
+  },
+  "fields": [],
+  "size": 0
+}
+
+# Block size (Average, Min, Max)
+#
+# Uses aggregations for max, min and average size
+# of blocks indexed by Elasticsearch
+GET _search
+{
+  "query": {
+    "match": { "_type": "block" }
+  },
+  "aggregations": {
+    "avg_size": {"avg": { "field": "size" }},
+    "min_size": {"min": { "field": "size" }},
+    "max_size": {"max": { "field": "size" }}
+  },
+  "fields": [],
+  "size": 0
+}
+
+# Block Data
+#
+# Uses partial_fields to get block information,
+# without transaction data
+GET _search
+{
+  "partial_fields": {
+    "BLOCK": {
+      "include": [],
+      "exclude": ["txinfo.*", "tx"]
+    }
+  },
+  "query": {
+    "match": { "_type": "block" }
+  },
+  "from": 1000,
+  "size": 5
+}
+
+
+# Multiple Blocks starting at Height
+#
+# Uses a range query on block height
+GET _search
+{
+  "query": {
+    "range": {
+      "height": {
+        "gte": "300100"
+      }
+    }
+  },
+  "partial_fields": {
+    "BLOCK": {
+      "include": [],
+      "exclude": ["tx", "txinfo.*"]
+    }
+  },
+  "size": 2
+}
+
+# Coinbase Transaction Data
+#
+# Gets data for the coinbase transaction,
+# the first transaction in a block
+GET _search
+{
+  "query": {
+    "range": {
+      "height": {
+        "gte": "300100"
+      }
+    }
+  },
+  "script_fields": {
+    "TX0": {
+      "script": "_source.txinfo[0]"
+    }
+  },
+  "size": 5
+}
+
+# Script Fields (and Coinbase)
+#
+# Uses dynamic scripting to create a new field
+# Supports groovy, JavaScript, Python, and others
+#
+# Here we pluck the COINBASE field
+GET _search
+{
+  "query": {
+    "range": {
+      "height": {
+        "gte": "300100"
+      }
+    }
+  },
+  "script_fields": {
+    "COINBASE": {
+      "script": "_source.txinfo[0].vin[0].coinbase"
+    }
+  },
+  "size": 2
+}
+
+# Human-readable Coinbase
+# See python's binascii.unhexlify(hex_str)
+# Or elasticsearch.js and String.fromCharCode(parseInt(hexCode))
+
+# Transaction Data
+#
+# Gets first transaction from series of blocks,
+# using script fields to pluck transaction info
+GET _search
+{
+  "query": {
+    "range": {
+      "height": {
+        "gte": "300100"
+      }
+    }
+  },
+  "script_fields": {
+    "TX0": {
+      "script": "_source.txinfo[1]"
+    }
+  },
+  "size": 5
+}
+
+# ScriptPubKey (Lock, TxOut)
+#
+# Selects script pub key object from
+# first transaction of given 10 blocks
+GET _search
+{
+  "query": {
+    "range": {
+      "height": {
+        "gte": "300100"
+      }
+    }
+  },
+  "script_fields": {
+    "SCRIPT_PUB_KEY": {
+      "script": "_source.txinfo[1].vout.scriptPubKey"
+    }
+  },
+  "size": 10
+}
+
+# Output Scripts
+#
+# Selects the scriptPubKey ASM from every output
+# of first transaction in series of 100 blocks
+GET _search
+{
+  "query": {
+    "range": {
+      "height": {
+        "gte": "300200"
+      }
+    }
+  },
+  "script_fields": {
+    "OUTPUT_SCRIPTS": {
+      "script": "_source.txinfo[1].vout.scriptPubKey*.asm"
+    }
+  },
+  "size": 100
+}
+
+# Input Scripts
+#
+# Selects the scriptSig ASM from every input
+# of first transaction in series of 100 blocks
+GET _search
+{
+  "query": {
+    "range": {
+      "height": {
+        "gte": "300200"
+      }
+    }
+  },
+  "script_fields": {
+    "INPUT_SCRIPTS": {
+      "script": "_source.txinfo[1].vin.scriptSig*.asm"
+    }
+  },
+  "size": 100
+}
+
+# Op Return
+#
+# Selects the scriptSig ASM from every input
+# of first transaction in series of 100 blocks
+GET _search
+{
+  "query": {
+    "match": {
+      "txinfo.vout.scriptPubKey.asm": "OP_RETURN"
+    }
+  },
+  "script_fields": {
+    "INPUT_SCRIPTS": {
+      "script": "_source.txinfo[1].vin.scriptSig*.asm"
+    }
+  },
+  "size": 100
+}
