@@ -5,7 +5,7 @@
 # Block Count
 #
 # Gets the total number of blocks
-# currently indexed by elastic search
+# currently indexed by Elasticsearch
 GET _search
 {
   "query": {
@@ -48,7 +48,7 @@ GET _search
   "size": 0
 }
 
-# Block size (Average, Min, Max)
+# Block Size (Average, Min, Max)
 #
 # Uses aggregations for max, min and average size
 # of blocks indexed by Elasticsearch
@@ -179,7 +179,7 @@ GET _search
 # ScriptPubKey (Lock, TxOut)
 #
 # Selects script pub key object from
-# first transaction of given 10 blocks
+# first transaction in a series of blocks
 GET _search
 {
   "query": {
@@ -200,7 +200,7 @@ GET _search
 # Output Scripts
 #
 # Selects the scriptPubKey ASM from every output
-# of first transaction in series of 100 blocks
+# of first transaction in a series of blocks
 GET _search
 {
   "query": {
@@ -215,13 +215,13 @@ GET _search
       "script": "_source.txinfo[1].vout.scriptPubKey*.asm"
     }
   },
-  "size": 100
+  "size": 3
 }
 
 # Input Scripts
 #
 # Selects the scriptSig ASM from every input
-# of first transaction in series of 100 blocks
+# of first transaction in a series of blocks
 GET _search
 {
   "query": {
@@ -236,13 +236,13 @@ GET _search
       "script": "_source.txinfo[1].vin.scriptSig*.asm"
     }
   },
-  "size": 100
+  "size": 3
 }
 
 # Op Return
 #
-# Selects the scriptSig ASM from every input
-# of first transaction in series of 100 blocks
+# Selects the output scripts (and embedded data)
+# for blocks with transactions using OP_RETURN
 GET _search
 {
   "query": {
@@ -251,9 +251,9 @@ GET _search
     }
   },
   "script_fields": {
-    "INPUT_SCRIPTS": {
-      "script": "_source.txinfo[1].vin.scriptSig*.asm"
+    "OUTPUT_SCRIPTS": {
+      "script": "_source.txinfo*.vout.scriptPubKey.asm"
     }
   },
-  "size": 100
+  "size": 3
 }
