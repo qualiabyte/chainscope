@@ -17,7 +17,7 @@ We're using the following tools:
 + Elasticsearch 1.4
 + Marvel Sense plugin
 
-For extracting blocks and transactions, we currently use [blockchain-elasticsearch](https://github.com/orweinberger/elasticsearch-blockchain),
+For extracting blocks and transactions, we currently use [elasticsearch-blockchain](https://github.com/orweinberger/elasticsearch-blockchain),
  a Node.js module available on NPM.
 
 ## Development
