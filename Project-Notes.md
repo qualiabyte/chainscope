@@ -35,7 +35,7 @@
 
 ### Comparison to Relational Databases
 
-Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
+Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns  
 Elasticsearch  ⇒ Indices   ⇒ Types  ⇒ Documents ⇒ Fields
 
 + Schemaless documents
@@ -98,6 +98,6 @@ Maps JSON values to Java data types
 + Build more interesting queries
 + Discover valuable use cases
 + Tune Bitcoind, Elasticsearch, and ES-blockchain
-  for extracting the data completely and reliably
+  for extracting data completely and reliably
 + Safe, read-only API to Elasticsearch for public use
 + Nice front-end for simple searches and exploration
