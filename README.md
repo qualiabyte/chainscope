@@ -22,7 +22,7 @@ For extracting blocks and transactions, we currently use [elasticsearch-blockcha
 
 ## Development
 
-We can still use help with:
+Future directions for development include:
 
 + Building interesting example queries
 + Discovering valuable use cases
@@ -31,7 +31,17 @@ We can still use help with:
 + Providing a safe, read-only interface to ES for public use
 + Developing a nice front-end for simple queries or exploration
 
-## Examples
+## Learn More
 
++ For details about the project, see [Project Notes](Project-Notes.md).
++ For example Elasticsearch queries, see the [Chainscope Demo](Chainscope-Demo.txt).
++ For experimenting with your own node, see our [Ubuntu Install Notes](Ubuntu-Install-Notes.md).
 
-For example Elasticsearch queries, see our [Chainscope Demo](Chainscope-Demo.txt).
+## About
+
+A project for Blockchain University 2015 by
+
++ Ben Bamberger
++ Eliot Weber
++ Tyler Florez
++ Viktor Korbukh
